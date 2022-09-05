@@ -2,6 +2,7 @@ import streamlit as st
 from passlib.hash import sha256_crypt
 import yaml
 
+
 Title = st.container()
 Surname = st.container()
 Name = st.container()
@@ -19,7 +20,7 @@ def main():
 
     with Surname:
         surname = st.text_input("Enter you surname here")
-        st.text("") # all of these empty st.text are to add space between the text inputs
+        st.text("")  # all of these empty st.text are to add space between the text inputs
 
     with Name:
         name = st.text_input("Enter your name here")
@@ -57,12 +58,13 @@ def main():
         st.text("")
         # Hashes the password
         password_hash = sha256_crypt.hash(user_input)
+    sha256_crypt.verify(user_input, password_hash)
 
-    # create  a yamlfile containing all user inputs, which is to be implemented into download_button
+    # create  a yaml file containing all user inputs, which is to be implemented into download_button
 
     dict_file = {'Form Contents': {'surname': surname,
                                    'name': name,
-                                   'emai': email,
+                                   'email': email,
                                    'group': group,
                                    'option1': option1,
                                    'option2': option2,
