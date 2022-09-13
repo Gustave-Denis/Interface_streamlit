@@ -2,6 +2,8 @@ import streamlit as st
 from passlib.hash import sha256_crypt
 import yaml
 
+# Faut recuperer les données en temps que variables d'environement!
+# need to save the form inputs as environmental variables in order to extract them using os.getenv/os.environ.get
 
 Title = st.container()
 Surname = st.container()
@@ -13,6 +15,7 @@ Keyboard_Configuration = st.container()
 Password = st.container()
 
 
+# Create form components
 def main():
 
     with Title:
@@ -31,7 +34,8 @@ def main():
         st.text("")
 
     with Group:
-        group = st.text_input("Enter what group you are working with")
+        group = st.selectbox("What group you are working with", ('Infrastructure', 'Core', 'Product'))
+        st.write('You selected:', group)
         st.text("")
 
     with Need_for_laptop:
@@ -58,21 +62,28 @@ def main():
         st.text("")
         # Hashes the password
         password_hash = sha256_crypt.hash(user_input)
-    sha256_crypt.verify(user_input, password_hash)
+        sha256_crypt.verify(user_input, password_hash)
 
-    # create  a yaml file containing all user inputs, which is to be implemented into download_button
+    # creates  a yaml file containing all user inputs once the submit button has been pressed.
+    submit = st.button('Submit and Send')
+    if submit:
+        dict_file = {'Form Contents': {'surname': surname,
+                                       'name': name,
+                                       'email': email,
+                                       'group': group,
+                                       'laptop': option1,
+                                       'keyboard configuration': option2,
+                                       'password_hash': password_hash}}
 
-    dict_file = {'Form Contents': {'surname': surname,
-                                   'name': name,
-                                   'email': email,
-                                   'group': group,
-                                   'option1': option1,
-                                   'option2': option2,
-                                   'password_hash': password_hash}}
+        with open('test_yaml.yml', 'w') as file:
+            yaml.dump(dict_file, file, sort_keys=False)
 
-    with open('test_yaml.yml', 'w') as file:
-        yaml.dump(dict_file, file, sort_keys=False)
+        exec(open("email.test.py").read())
+
+        st.write(""
+                 "Thank you, your form has been submitted")
 
 
 if __name__ == '__main__':
     main()
+
